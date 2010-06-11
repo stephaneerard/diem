@@ -349,6 +349,23 @@ class dmAdminBaseGeneratedModuleActions extends dmAdminBaseActions
     
     $this->processSortForm($this->form);
   }
+
+  public function executeSortTree(sfWebRequest $request)
+  {
+    $this->forward404Unless($this->getDmModule()->getTable()->isNestedSet());
+
+    $this->context->getServiceContainer()->addParameters(array(
+      'admin_sort_form.defaults'  => array(),
+      'admin_sort_form.options'   => array(
+        'module' => $this->getDmModule(),
+        'query'  => $this->getDmModule()->getTable()->createQuery('r')->orderBy('r.position asc')
+      )
+    ));
+
+    $this->form = $this->getService('admin_sort_tree_form');
+
+    $this->processSortForm($this->form);
+  }
   
   public function executeSortReferers(sfWebRequest $request)
   {
