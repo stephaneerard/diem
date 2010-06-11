@@ -402,10 +402,10 @@ class dmPageSynchronizer
         {
           throw new dmException(sprintf('parent page with id %d for new page %s was not found', $parentPageId, $page['module'].'.show'));
         }
-        
-        $pageRecord = dmDb::table('DmPage')->find($page['id']);
-        $pageRecord->refresh(true);
-        $pageRecord->getNode()->moveAsLastChildOf($parentPage);
+// disabled next 3 lines to maintain manually sorted auto generated pages        
+//        $pageRecord = dmDb::table('DmPage')->find($page['id']);
+//        $pageRecord->refresh(true);
+//        $pageRecord->getNode()->moveAsLastChildOf($parentPage);
       }
     }
   }

@@ -5,7 +5,7 @@ class dmAdminFullPageTreeView extends dmAdminPageTreeView
 
   protected function renderOpenLi(array $page)
   {
-    if($page[1] === 'show')
+    if($page[1] === 'show' && false)  // disabled rel=auto to allow drag'n'drop for auto-generated pages
     {
       $type = 'auto';
     }
