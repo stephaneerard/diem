@@ -351,6 +351,11 @@ abstract class dmDoctrineTable extends Doctrine_Table
   {
     return ($this->hasTemplate('DmSortable') || $this->hasTemplate('Sortable')) && 'id' === $this->getPrimaryKey();
   }
+
+  public function isNestedSet()
+  {
+    return $this->hasTemplate('NestedSet') && 'id' === $this->getPrimaryKey();
+  }
   
   public function isVersionable()
   {
