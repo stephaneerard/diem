@@ -9,11 +9,15 @@ div.tree-page-edit .no_dots li.leaf { background-image:none; background-color:tr
 /* OPEN or CLOSED */
 div.tree-page-edit li.open { background:url("icons.png") -32px -48px no-repeat; }
 div.tree-page-edit li.closed, #jstree-draggeddiv.tree-page-edit li li.open { background:url("icons.png") -48px -32px no-repeat; }
+div.tree-page-edit li.last.closed { background:url("icons.png") no-repeat scroll 0px -64px transparent; }
+div.tree-page-edit li.last.open { background:url("icons.png") no-repeat scroll 0px -81px transparent; }
+
 #jstree-marker { background-image:url("icons.png"); }
 /* DEFAULT, HOVER, CLICKED, LOADING STATES */
+div.tree-page-edit li a, div.tree-page-edit li span { padding:1px 4px 1px 0; }
 div.tree-page-edit li a, div.tree-page-edit li span { border-radius:3px; -moz-border-radius:3px; -webkit-border-radius:3px; }
-div.tree-page-edit li a:hover, div.tree-page-edit li a.hover, div.tree-page-edit li span { background: #e7f4f9; border:1px solid #d8f0fa; padding:0px 3px 0px 3px; }
-div.tree-page-edit li a.clicked, div.tree-page-edit li a.clicked:hover, div.tree-page-edit li span.clicked { background: #beebff; border:1px solid #99defd; padding:0px 3px 0px 3px; }
+div.tree-page-edit li a:hover, div.tree-page-edit li a.hover, div.tree-page-edit li span { background: #e7f4f9; border:1px solid #d8f0fa; padding:0px 3px 0px 1px; }
+div.tree-page-edit li a.clicked, div.tree-page-edit li a.clicked:hover, div.tree-page-edit li span.clicked { background: #beebff; border:1px solid #99defd; padding:0px 3px 0px 1px; }
 /* ICONS */
 div.tree-page-edit ins { background-image:url("icons.png"); background-position:0 0; background-repeat:no-repeat; }
 div.tree-page-edit ul li a.loading ins { background-image:url("throbber.gif") !important; background-position:0 0 !important; } /* UL is added to make selector stronger */

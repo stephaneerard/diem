@@ -142,6 +142,11 @@ services:
     shared:                   false
     arguments:                [ %admin_sort_form.defaults%, %admin_sort_form.options% ]
 
+  admin_sort_tree_form:
+    class:                    %admin_sort_tree_form.class%
+    shared:                   false
+    arguments:                [ %admin_sort_form.defaults%, %admin_sort_form.options% ]
+
   admin_sort_referers_form:
     class:                    %admin_sort_referers_form.class%
     shared:                   false

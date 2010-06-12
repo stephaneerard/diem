@@ -1,3 +1,3 @@
 [?php
 
-include_partial('dmAdminGenerator/sortTree', array('form' => $form));
+include_partial('dmAdminGenerator/sortTree', array('tree' => $tree));
