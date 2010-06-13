@@ -180,7 +180,9 @@ parameters:
   page_tree_view.options:     []
 
   model_tree_view.class:       dmModelTreeView        # Render a model tree
-  model_tree_view.options:     []
+  model_tree_view.options:
+    model: 'test'
+    fields: []
 
   download.class:             dmDownloadResponse    # Triggers a download from a file or string data
   download.options:           []

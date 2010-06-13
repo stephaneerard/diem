@@ -3,9 +3,9 @@
 class dmAdminModelTreeView extends dmModelTreeView
 {
 
-  protected function renderModelLink(array $page)
+  protected function renderModelLink(myDoctrineRecord $model)
   {
-    return '<a data-page-id="'.$page[0].'"><ins></ins>'.$page[1].'</a>';
+    return '<a data-model-id="'.$model->id.'"><ins></ins>'.$model->name.'</a>';
   }
 
 }

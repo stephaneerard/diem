@@ -19,7 +19,7 @@ echo _open('div.dm_sort.dm_box.big');
   echo _open('div.dm_box_inner');
 
     echo _tag('div#dm_full_model_tree.clearfix.dm', array('json' => array(
-      'move_url' => _link('dmPage/move')->getHref()
+      'move_url' => _link('dmAdminGenerator/move?dm_module='.$dm_module)->getHref()
     )), $tree->render());
 
 //    echo $form->renderFormTag($sf_request->getUri());

@@ -3,8 +3,7 @@
 abstract class dmModelTreeView extends dmConfigurable
 {
   protected
-  $model,
-  $fields,
+  $options,
   $helper,
   $culture,
   $tree,
@@ -16,37 +15,34 @@ abstract class dmModelTreeView extends dmConfigurable
   {
     $this->helper   = $helper;
     $this->culture  = $culture;
-    $this->tree     = $this->getRecordTree();
-    $this->fields   = array('model' => array('id', 'name'));
-    $this->model    = 'TeamCategory';
-    //die($this->model);
-    
-    $this->initialize($options);
-  }
 
-  public function setModel($model) {
-    if (dmDb::table($model) instanceof dmDoctrineTable && dmDb::table($model)->isNestedSet()) {
-      $this->model = $model;
-    }
+    $this->initialize($options);
+
+    $this->tree     = $this->getRecordTree();
+
   }
 
   protected function initialize(array $options)
   {
+    if (!(dmDb::table($options['model']) instanceof dmDoctrineTable && dmDb::table($options['model'])->isNestedSet())) {
+      unset ($options['model']);
+    }
     $this->configure($options);
   }
 
-  abstract protected function renderModelLink(array $page);
+  abstract protected function renderModelLink(myDoctrineRecord $model);
 
   protected function getRecordTree()
   {
-    $this->model = 'TeamCategory';
-    $this->fields   = array('model' => array('id', 'name'));
-    $modelTableTree = dmDb::table($this->model)->getTree();
+    //die(var_dump($this->options));
+
+    $modelTableTree = dmDb::table($this->options['model'])->getTree();
 
     $modelTableTree->setBaseQuery($this->getRecordTreeQuery());
 
-    $tree = $modelTableTree->fetchTree(array(), Doctrine_Core::HYDRATE_NONE);
-    
+    $tree = $modelTableTree->fetchTree();
+    //$tree = $modelTableTree->fetchTree(array(), Doctrine_Core::HYDRATE_NONE);
+
     $modelTableTree->resetBaseQuery();
 
     return $tree;
@@ -54,15 +50,11 @@ abstract class dmModelTreeView extends dmConfigurable
 
   protected function getRecordTreeQuery()
   {
-    $select = 'model.' . implode(', model.', $this->fields['model']);
-    if (isset($this->fields['i18n']) && is_array($this->fields['i18n'])) {
-      $select .= 'modelTranslation.' . implode(', modelTranslation.', $this->fields['i18n']);
-    }
-    //die(var_dump($select));
-
-    $query = dmDb::table($this->model)->createQuery('model');
-    if (dmDb::table($this->model)->hasI18n()) {
+    $select = 'model.*';
+    $query = dmDb::table($this->options['model'])->createQuery('model');
+    if (dmDb::table($this->options['model'])->hasI18n()) {
       $query->withI18n($this->culture, null, 'model');
+      $select .= ', modelTranslation.*';
     }
     return $query->select($select);
   }
@@ -74,9 +66,11 @@ abstract class dmModelTreeView extends dmConfigurable
     $this->html = $this->helper->open('ul', $this->options);
 
     $this->lastLevel = false;
+    //die(var_dump(get_class($this->tree)));
     foreach($this->tree as $node)
     {
-      $this->level = $node[4];
+      //die(var_dump(get_class($node)));
+      $this->level = $node->level;
       $this->html .= $this->renderNode($node);
       $this->lastLevel = $this->level;
     }
@@ -86,7 +80,7 @@ abstract class dmModelTreeView extends dmConfigurable
     return $this->html;
   }
 
-  protected function renderNode(array $model)
+  protected function renderNode(myDoctrineRecord $model)
   {
     /*
      * First time, don't insert nothing
@@ -115,9 +109,9 @@ abstract class dmModelTreeView extends dmConfigurable
     return $html;
   }
 
-  protected function renderOpenLi(array $model)
+  protected function renderOpenLi(myDoctrineRecord $model)
   {
-    return '<li id="dmm'.$model[0].'" rel="manual">';
+    return '<li id="dmm'.$model->id.'" rel="manual">';
   }
 
 }

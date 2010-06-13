@@ -56,7 +56,7 @@
           $.ajax({
             url:        $tree.metadata().move_url,
             data: {
-              page:     data.node.id.substr(3),
+              model:     data.node.id.substr(3),
               from:     data.old_parent.id.substr(3),
               to:       data.parent.id.substr(3),
               previous: ($(data.node).prev().attr('id') || '').substr(3)

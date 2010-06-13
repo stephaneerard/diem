@@ -355,7 +355,19 @@ class dmAdminBaseGeneratedModuleActions extends dmAdminBaseActions
     $this->forward404Unless($this->getDmModule()->getTable()->isNestedSet());
 
     sfConfig::set('dm_pageBar_enabled', false);
+
+    $this->context->getServiceContainer()->addParameters(array(
+      'model_tree_view.defaults'  => array(),
+      'model_tree_view.options'   => array(
+        'model'  => $this->getDmModule()->getModel(),
+        'fields' => 'id,name'
+      )
+    ));
+
+    $this->dm_module = $this->getDmModule();
+
     $this->tree = $this->getService('model_tree_view', 'dmAdminModelTreeView');
+
 //    die(var_dump(get_class($tree)));
 //    $this->tree->setModel($this->getDmModule()->getModel());
 
