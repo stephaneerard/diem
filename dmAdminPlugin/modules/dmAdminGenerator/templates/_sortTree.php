@@ -18,9 +18,8 @@ echo _open('div.dm_sort.dm_box.big');
 
   echo _open('div.dm_box_inner');
 
-    echo _tag('div#dm_full_model_tree.clearfix.dm', array('json' => array(
-      'move_url' => _link('dmAdminGenerator/move?dm_module='.$dm_module)->getHref()
-    )), $tree->render());
+    echo _open('div#dm_full_model_tree.clearfix.dm');
+      echo $tree->render();
 
 //    echo $form->renderFormTag($sf_request->getUri());
 //
@@ -42,6 +41,8 @@ echo _open('div.dm_sort.dm_box.big');
 //    echo $submit;
 //
 //    echo '</form>';
+
+    echo _close('div');
 
   echo _close('div');
 

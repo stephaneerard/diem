@@ -22,6 +22,10 @@ abstract class dmModelTreeView extends dmConfigurable
 
   }
 
+  public function getTree() {
+    return $this->tree->getTable()->getTree();
+  }
+
   protected function initialize(array $options)
   {
     if (!(dmDb::table($options['model']) instanceof dmDoctrineTable && dmDb::table($options['model'])->isNestedSet())) {
@@ -59,23 +63,42 @@ abstract class dmModelTreeView extends dmConfigurable
     return $query->select($select);
   }
 
-  public function render($options = array())
+  public function render($options = array(), $treeOptions = array())
   {
     $this->options = array_merge(dmString::toArray($options, true), $this->options);
 
-    $this->html = $this->helper->open('ul', $this->options);
+    $rootColumnName = $this->getTree()->getAttribute('rootColumnName');
 
-    $this->lastLevel = false;
-    //die(var_dump(get_class($this->tree)));
-    foreach($this->tree as $node)
-    {
-      //die(var_dump(get_class($node)));
-      $this->level = $node->level;
-      $this->html .= $this->renderNode($node);
-      $this->lastLevel = $this->level;
+    $this->html = '';
+
+    foreach ($this->getTree()->fetchRoots() as $root) {
+      $treeOptions = array_merge(
+        $treeOptions,
+        array('root_id' => $root->$rootColumnName)
+      );
+
+      //echo $treeOptions['root_id'];
+
+      $this->html .= $this->helper->open('div', array('json' => array(
+        'move_url' => $this->helper->link('dmAdminGenerator/move?dm_module='.$this->options['module'])->getHref()
+      )));
+      $this->html .= $this->helper->open('ul', $this->options);
+
+      $this->lastLevel = false;
+      //die (var_dump($options));
+      //die(var_dump(get_class($this->tree)));
+      foreach($this->getTree()->fetchTree($treeOptions) as $node)
+      {
+        //die(var_dump(get_class($node)));
+        $this->level = $node->level;
+        $this->html .= $this->renderNode($node);
+        $this->lastLevel = $this->level;
+      }
+
+      $this->html .= str_repeat('</li></ul>', $this->lastLevel+1);
+      $this->html .= $this->helper->close('div');
+
     }
-
-    $this->html .= str_repeat('</li></ul>', $this->lastLevel+1);
 
     return $this->html;
   }

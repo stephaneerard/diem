@@ -360,7 +360,7 @@ class dmAdminBaseGeneratedModuleActions extends dmAdminBaseActions
       'model_tree_view.defaults'  => array(),
       'model_tree_view.options'   => array(
         'model'  => $this->getDmModule()->getModel(),
-        'fields' => 'id,name'
+        'module' => $this->getDmModule()->__toString()
       )
     ));
 
