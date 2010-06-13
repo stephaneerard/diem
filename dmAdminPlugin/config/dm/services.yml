@@ -48,8 +48,6 @@ parameters:
 
   admin_sort_table_form.class:   dmAdminSortTableForm # Generic form to sort a table
 
-  admin_sort_tree_form.class:    dmAdminSortTreeForm # Generic form to sort a table with a nested set
-
   admin_sort_referers_form.class: dmAdminSortReferersForm # Generic form to sort table's referers
 
   layout_helper.class:        dmAdminLayoutHelper # Responsible for rendering the admin layout
@@ -141,11 +139,6 @@ services:
 
   admin_sort_table_form:
     class:                    %admin_sort_table_form.class%
-    shared:                   false
-    arguments:                [ %admin_sort_form.defaults%, %admin_sort_form.options% ]
-
-  admin_sort_tree_form:
-    class:                    %admin_sort_tree_form.class%
     shared:                   false
     arguments:                [ %admin_sort_form.defaults%, %admin_sort_form.options% ]
 
