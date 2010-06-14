@@ -23,7 +23,9 @@ abstract class dmModelTreeView extends dmConfigurable
   }
 
   public function getTree() {
-    return $this->tree->getTable()->getTree();
+    return dmDb::table($this->options['model'])->getTree();
+
+//    return $this->tree->getTable()->getTree();
   }
 
   protected function initialize(array $options)
@@ -71,36 +73,47 @@ abstract class dmModelTreeView extends dmConfigurable
 
     $this->html = '';
 
-    foreach ($this->getTree()->fetchRoots() as $root) {
-      $treeOptions = array_merge(
-        $treeOptions,
-        array('root_id' => $root->$rootColumnName)
-      );
+    if ($rootColumnName) {
+      foreach ($this->getTree()->fetchRoots() as $root) {
+        $treeOptions = array_merge(
+          $treeOptions,
+          array('root_id' => $root->$rootColumnName)
+        );
 
-      //echo $treeOptions['root_id'];
+        //echo $treeOptions['root_id'];
 
-      $this->html .= $this->helper->open('div', array('json' => array(
-        'move_url' => $this->helper->link('dmAdminGenerator/move?dm_module='.$this->options['module'])->getHref()
-      )));
-      $this->html .= $this->helper->open('ul', $this->options);
+        $this->renderTree($options, $treeOptions);
 
-      $this->lastLevel = false;
-      //die (var_dump($options));
-      //die(var_dump(get_class($this->tree)));
-      foreach($this->getTree()->fetchTree($treeOptions) as $node)
-      {
-        //die(var_dump(get_class($node)));
-        $this->level = $node->level;
-        $this->html .= $this->renderNode($node);
-        $this->lastLevel = $this->level;
       }
-
-      $this->html .= str_repeat('</li></ul>', $this->lastLevel+1);
-      $this->html .= $this->helper->close('div');
-
+    } else {
+      $this->renderTree($options, $treeOptions);
     }
 
     return $this->html;
+  }
+
+  public function renderTree($options = array(), $treeOptions = array())
+  {
+
+    $this->html .= $this->helper->open('div', array('json' => array(
+      'move_url' => $this->helper->link('dmAdminGenerator/move?dm_module='.$this->options['module'])->getHref()
+    )));
+    $this->html .= $this->helper->open('ul', $this->options);
+
+    $this->lastLevel = false;
+    //die (var_dump($options));
+    //die(var_dump(get_class($this->tree)));
+    foreach($this->getTree()->fetchTree($treeOptions) as $node)
+    {
+      //die(var_dump(get_class($node)));
+      $this->level = $node->level;
+      $this->html .= $this->renderNode($node);
+      $this->lastLevel = $this->level;
+    }
+
+    $this->html .= str_repeat('</li></ul>', $this->lastLevel+1);
+    $this->html .= $this->helper->close('div');
+
   }
 
   protected function renderNode(myDoctrineRecord $model)
