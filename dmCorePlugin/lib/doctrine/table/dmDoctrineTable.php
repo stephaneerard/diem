@@ -354,7 +354,7 @@ abstract class dmDoctrineTable extends Doctrine_Table
 
   public function isNestedSet()
   {
-    return $this->hasTemplate('NestedSet') && 'id' === $this->getPrimaryKey();
+    return $this->hasTemplate('NestedSet') && 'id' === $this->getPrimaryKey(); // && !$this->getOption('hasManyRoots');
   }
   
   public function isVersionable()

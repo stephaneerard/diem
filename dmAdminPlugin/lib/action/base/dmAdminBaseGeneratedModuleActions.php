@@ -354,17 +354,34 @@ class dmAdminBaseGeneratedModuleActions extends dmAdminBaseActions
   {
     $this->forward404Unless($this->getDmModule()->getTable()->isNestedSet());
 
+    sfConfig::set('dm_pageBar_enabled', false);
+
     $this->context->getServiceContainer()->addParameters(array(
-      'admin_sort_form.defaults'  => array(),
-      'admin_sort_form.options'   => array(
-        'module' => $this->getDmModule(),
-        'query'  => $this->getDmModule()->getTable()->createQuery('r')->orderBy('r.position asc')
+      'model_tree_view.defaults'  => array(),
+      'model_tree_view.options'   => array(
+        'model'  => $this->getDmModule()->getModel(),
+        'module' => $this->getDmModule()->__toString()
       )
     ));
 
-    $this->form = $this->getService('admin_sort_tree_form');
+    $this->dm_module = $this->getDmModule();
 
-    $this->processSortForm($this->form);
+    $this->tree = $this->getService('model_tree_view', 'dmAdminModelTreeView');
+
+//    die(var_dump(get_class($tree)));
+//    $this->tree->setModel($this->getDmModule()->getModel());
+
+//    $this->context->getServiceContainer()->addParameters(array(
+//      'admin_sort_form.defaults'  => array(),
+//      'admin_sort_form.options'   => array(
+//        'module' => $this->getDmModule(),
+//        'query'  => $this->getDmModule()->getTable()->createQuery('r')->orderBy('r.lft asc')
+//      )
+//    ));
+//
+//    $this->form = $this->getService('admin_sort_tree_form');
+//
+//    $this->processSortForm($this->form);
   }
   
   public function executeSortReferers(sfWebRequest $request)
