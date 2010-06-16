@@ -34,7 +34,7 @@ abstract class dmDoctrineRecord extends sfDoctrineRecord
   public function getIndentedName()
   {
     if ($this->getTable()->isNestedSet()) {
-      return str_repeat('--', $this->level) . $this;
+      return str_repeat('--', $this->level) . ' ' . $this;
     }
   }
 

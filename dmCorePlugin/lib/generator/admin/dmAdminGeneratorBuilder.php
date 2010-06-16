@@ -149,6 +149,7 @@ class dmAdminGeneratorBuilder
 //    }
 
     if ($this->table->isNestedSet()) {
+      $display[] = 'indented_name';
       $display[] = 'parent';
     }
 

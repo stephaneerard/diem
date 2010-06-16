@@ -26,14 +26,14 @@ abstract class dmFormDoctrine extends sfFormDoctrine
       unset($this['root_id'], $this['lft'], $this['rgt'], $this['level']);
 
       $this->widgetSchema['parent_id'] = new sfWidgetFormDoctrineChoice(array(
-        'model' => $this->object->getComponentName(),
+        'model' => get_class($this->object),
         'add_empty' => '~',
         'order_by' => array('root_id, lft',''),
         'method' => 'getIndentedName'
         ));
       $this->validatorSchema['parent_id'] = new sfValidatorDoctrineChoice(array(
         'required' => false,
-        'model' => $this->object->getComponentName()
+        'model' => get_class($this->object)
         ));
       $this->setDefault('parent_id', $this->object->getParentId());
       $this->widgetSchema->setLabel('parent_id', 'Child of');
