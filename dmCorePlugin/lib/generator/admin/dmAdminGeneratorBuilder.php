@@ -109,7 +109,7 @@ class dmAdminGeneratorBuilder
       'sort'    => $this->getListSort(),
       'table_method' => 'getAdminListQuery',
       'table_count_method' => '~',
-      'sortable' => $this->table->isSortable()
+      'sortable' => $this->table->isSortable() || $this->table->isNestedSet()
     );
   }
 
@@ -135,6 +135,10 @@ class dmAdminGeneratorBuilder
 //      $display[] = $mediaField.'_view_little';
 //      unset($fields[$mediaFieldName]);
 //    }
+
+    if ($this->table->isNestedSet()) {
+      $display[] = 'parent';
+    }
 
     foreach($this->table->getRelationHolder()->getLocals() as $alias => $relation)
     {
@@ -303,6 +307,10 @@ class dmAdminGeneratorBuilder
         $sets['NONE'][] = $relation->getLocalColumnName();
         unset($fields[$relation->getLocalColumnName()]);
       }
+    }
+
+    if ($this->table->isNestedSet()) {
+      $sets['NONE'][] = 'parent_id';
     }
 
     foreach($this->getTextFields($fields) as $field)

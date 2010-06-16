@@ -10,6 +10,70 @@
  */
 abstract class dmFormDoctrine extends sfFormDoctrine
 {
+  protected $parentId = null;
+
+  public function updateParentIdColumn($parentId)
+  {
+    $this->parentId = $parentId;
+    // further action is handled in the save() method
+  }
+
+  public function configure() {
+
+    if ($this->object->getTable()->isNestedSet()) {
+      // unset NestedSet columns
+
+      unset($this['root_id'], $this['lft'], $this['rgt'], $this['level']);
+
+      $this->widgetSchema['parent_id'] = new sfWidgetFormDoctrineChoice(array(
+        'model' => $this->object->getComponentName(),
+        'add_empty' => '~',
+        'order_by' => array('root_id, lft',''),
+        'method' => 'getIndentedName'
+        ));
+      $this->validatorSchema['parent_id'] = new sfValidatorDoctrineChoice(array(
+        'required' => false,
+        'model' => $this->object->getComponentName()
+        ));
+      $this->setDefault('parent_id', $this->object->getParentId());
+      $this->widgetSchema->setLabel('parent_id', 'Child of');
+
+    }
+
+    parent::configure();
+  }
+
+  /**
+   * Extend the doSave method to handle NestedSets
+   * @param Doctrine_Connection $con
+   */
+  protected function doSave($con = null) {
+
+    parent::doSave($con);
+
+    if ($this->object->getTable()->isNestedSet()) {
+
+      $node = $this->object->getNode();
+
+      if ($this->parentId != $this->object->getParentId() || !$node->isValidNode()) {
+        if (empty($this->parentId)) {
+          //save as a root
+          if ($node->isValidNode()) {
+            $node->makeRoot($this->object['id']);
+            $this->object->save($con);
+          } else {
+            $this->object->getTable()->getTree()->createRoot($this->object); //calls $this->object->save internally
+          }
+        } else {
+          //form validation ensures an existing ID for $this->parentId
+          $parent = $this->object->getTable()->find($this->parentId);
+          $method = ($node->isValidNode() ? 'move' : 'insert') . 'AsFirstChildOf';
+          $node->$method($parent); //calls $this->object->save internally
+        }
+      }
+    }
+  }
+
   /**
    * Unset automatic fields like 'created_at', 'updated_at', 'position'
    */

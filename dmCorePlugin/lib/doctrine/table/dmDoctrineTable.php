@@ -228,7 +228,17 @@ abstract class dmDoctrineTable extends Doctrine_Table
    */
   public function getAdminListQuery(dmDoctrineQuery $query)
   {
-    return $this->joinLocals($query->withI18n(null, $this->getComponentName()), true);
+    $query = $this->joinLocals($query->withI18n(null, $this->getComponentName()), true);
+
+    if ($this->isNestedSet()) {
+      if ($this->getTemplate('NestedSet')->getOption('hasManyRoots')) {
+        $query->addOrderBy(($this->getTemplate('NestedSet')->getOption('rootColumnName') ? $this->getTemplate('NestedSet')->getOption('rootColumnName') : 'root_id') . ' ASC');
+      } 
+      $query->addOrderBy('lft ASC');
+    } elseif ($this->isSortable()) {
+      $query->addOrderBy('position ASC');
+    }
+    return $query;
   }
 
   /**
@@ -354,7 +364,7 @@ abstract class dmDoctrineTable extends Doctrine_Table
 
   public function isNestedSet()
   {
-    return $this->hasTemplate('NestedSet') && 'id' === $this->getPrimaryKey(); // && !$this->getOption('hasManyRoots');
+    return $this->hasTemplate('NestedSet') && 'id' === $this->getPrimaryKey();
   }
   
   public function isVersionable()
