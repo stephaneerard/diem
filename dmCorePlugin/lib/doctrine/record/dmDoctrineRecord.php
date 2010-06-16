@@ -14,7 +14,7 @@ abstract class dmDoctrineRecord extends sfDoctrineRecord
    * Doctrine nestedSet helper
    * @return integer  
    */
-  public function getParent() {
+  public function getNestedSetParent() {
     if ($this->getTable()->isNestedSet())
     {
       if (!$this->getNode()->isValidNode() || $this->getNode()->isRoot()) {
@@ -27,11 +27,11 @@ abstract class dmDoctrineRecord extends sfDoctrineRecord
     return Doctrine_Null;
   }
 
-  public function getParentId() {
-    return $this->getParent()->id;
+  public function getNestedSetParentId() {
+    return $this->getNestedSetParent()->id;
   }
 
-  public function getIndentedName()
+  public function getNestedSetIndentedName()
   {
     if ($this->getTable()->isNestedSet()) {
       return str_repeat('--', $this->level) . ' ' . $this;

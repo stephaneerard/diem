@@ -119,15 +119,6 @@ class dmAdminGeneratorBuilder
       '='.$this->table->getIdentifierColumnName()
     );
 
-    $nestedset = array();
-    if ($this->table->isNestedSet()) {
-      $nestedset = array('lft', 'rgt', 'level');
-      if ($this->table->getTemplate('NestedSet')->getOption('hasManyRoots')) {
-        $nestedset[] = $this->table->getTemplate('NestedSet')->getOption('rootColumnName')
-          ? $this->table->getTemplate('NestedSet')->getOption('rootColumnName') : 'root_id';
-      }
-    }
-
     $fields = dmArray::valueToKey(array_diff($this->table->getAllColumnNames(), array_unique(array_merge(
       // always exclude these fields
       $this->getListExcludedFields(),
@@ -136,10 +127,7 @@ class dmAdminGeneratorBuilder
       // exlude primary keys
       $this->table->getPrimaryKeys(),
       // exclude collumn aggregation key fields
-      array_keys((array)$this->table->getOption('inheritanceMap')),
-      // exclude nestedset fields
-      $nestedset
-
+      array_keys((array)$this->table->getOption('inheritanceMap'))
     ))));
     
 //    foreach($this->module->getDmMediaFields() as $mediaField)
@@ -149,8 +137,8 @@ class dmAdminGeneratorBuilder
 //    }
 
     if ($this->table->isNestedSet()) {
-      $display[] = 'indented_name';
-      $display[] = 'parent';
+      $display[] = 'nested_set_indented_name';
+      $display[] = 'nested_set_parent';
     }
 
     foreach($this->table->getRelationHolder()->getLocals() as $alias => $relation)
@@ -224,15 +212,6 @@ class dmAdminGeneratorBuilder
       $this->table->getIdentifierColumnName()
     );
 
-    $nestedset = array();
-    if ($this->table->isNestedSet()) {
-      $nestedset = array('lft', 'rgt', 'level');
-      if ($this->table->getTemplate('NestedSet')->getOption('hasManyRoots')) {
-        $nestedset[] = $this->table->getTemplate('NestedSet')->getOption('rootColumnName')
-          ? $this->table->getTemplate('NestedSet')->getOption('rootColumnName') : 'root_id';
-      }
-    }
-
     $fields = dmArray::valueToKey(array_diff($this->table->getAllColumnNames(), array_unique(array_merge(
       // always exclude these fields
       $this->getFilterExcludedFields(),
@@ -241,9 +220,7 @@ class dmAdminGeneratorBuilder
       // exlude primary keys
       $this->table->getPrimaryKeys(),
       // exclude collumn aggregation key fields
-      array_keys((array)$this->table->getOption('inheritanceMap')),
-      // exclude nestedset fields
-      $nestedset
+      array_keys((array)$this->table->getOption('inheritanceMap'))
     ))));
 
     foreach($this->getBooleanFields() as $field)
@@ -334,7 +311,7 @@ class dmAdminGeneratorBuilder
     }
 
     if ($this->table->isNestedSet()) {
-      $sets['NONE'][] = 'parent_id';
+      $sets['NONE'][] = 'nested_set_parent_id';
     }
 
     foreach($this->getTextFields($fields) as $field)
@@ -488,6 +465,15 @@ class dmAdminGeneratorBuilder
     {
       $fields[] = 'position';
     }
+    if ($this->table->isNestedSet()) {
+      $fields[] = 'lft';
+      $fields[] = 'rgt';
+      $fields[] = 'level';
+      if ($this->table->getTemplate('NestedSet')->getOption('hasManyRoots')) {
+        $fields[] = $this->table->getTemplate('NestedSet')->getOption('rootColumnName')
+          ? $this->table->getTemplate('NestedSet')->getOption('rootColumnName') : 'root_id';
+      }
+    }
 
     return $fields;
   }
@@ -507,6 +493,15 @@ class dmAdminGeneratorBuilder
     if($this->table->isSortable())
     {
       $fields[] = 'position';
+    }
+    if ($this->table->isNestedSet()) {
+      $fields[] = 'lft';
+      $fields[] = 'rgt';
+      $fields[] = 'level';
+      if ($this->table->getTemplate('NestedSet')->getOption('hasManyRoots')) {
+        $fields[] = $this->table->getTemplate('NestedSet')->getOption('rootColumnName')
+          ? $this->table->getTemplate('NestedSet')->getOption('rootColumnName') : 'root_id';
+      }
     }
 
     return $fields;

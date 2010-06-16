@@ -10,11 +10,11 @@
  */
 abstract class dmFormDoctrine extends sfFormDoctrine
 {
-  protected $parentId = null;
+  protected $nestedSetParentId = null;
 
-  public function updateParentIdColumn($parentId)
+  public function updateNestedSetParentIdColumn($nestedSetParentId)
   {
-    $this->parentId = $parentId;
+    $this->nestedSetParentId = $nestedSetParentId;
     // further action is handled in the save() method
   }
 
@@ -22,21 +22,20 @@ abstract class dmFormDoctrine extends sfFormDoctrine
 
     if ($this->object->getTable()->isNestedSet()) {
       // unset NestedSet columns
-
       unset($this['root_id'], $this['lft'], $this['rgt'], $this['level']);
 
-      $this->widgetSchema['parent_id'] = new sfWidgetFormDoctrineChoice(array(
+      $this->widgetSchema['nested_set_parent_id'] = new sfWidgetFormDoctrineChoice(array(
         'model' => get_class($this->object),
         'add_empty' => '~',
         'order_by' => array('root_id, lft',''),
-        'method' => 'getIndentedName'
+        'method' => 'getNestedSetIndentedName'
         ));
-      $this->validatorSchema['parent_id'] = new sfValidatorDoctrineChoice(array(
+      $this->validatorSchema['nested_set_parent_id'] = new sfValidatorDoctrineChoice(array(
         'required' => false,
         'model' => get_class($this->object)
         ));
-      $this->setDefault('parent_id', $this->object->getParentId());
-      $this->widgetSchema->setLabel('parent_id', 'Child of');
+      $this->setDefault('nested_set_parent_id', $this->object->getNestedSetParentId());
+      $this->widgetSchema->setLabel('nested_set_parent_id', 'Child of');
 
     }
 
@@ -55,8 +54,8 @@ abstract class dmFormDoctrine extends sfFormDoctrine
 
       $node = $this->object->getNode();
 
-      if ($this->parentId != $this->object->getParentId() || !$node->isValidNode()) {
-        if (empty($this->parentId)) {
+      if ($this->nestedSetParentId != $this->object->getNestedSetParentId() || !$node->isValidNode()) {
+        if (empty($this->nestedSetParentId)) {
           //save as a root
           if ($node->isValidNode()) {
             $node->makeRoot($this->object['id']);
@@ -65,10 +64,10 @@ abstract class dmFormDoctrine extends sfFormDoctrine
             $this->object->getTable()->getTree()->createRoot($this->object); //calls $this->object->save internally
           }
         } else {
-          //form validation ensures an existing ID for $this->parentId
-          $parent = $this->object->getTable()->find($this->parentId);
-          $method = ($node->isValidNode() ? 'move' : 'insert') . 'AsFirstChildOf';
-          $node->$method($parent); //calls $this->object->save internally
+          //form validation ensures an existing ID for $this->nestedSetParentId
+          $nestedSetParent = $this->object->getTable()->find($this->nestedSetParentId);
+          $nestedSetMethod = ($node->isValidNode() ? 'move' : 'insert') . 'AsFirstChildOf';
+          $node->$nestedSetMethod($nestedSetParent); //calls $this->object->save internally
         }
       }
     }
