@@ -119,6 +119,15 @@ class dmAdminGeneratorBuilder
       '='.$this->table->getIdentifierColumnName()
     );
 
+    $nestedset = array();
+    if ($this->table->isNestedSet()) {
+      $nestedset = array('lft', 'rgt', 'level');
+      if ($this->table->getTemplate('NestedSet')->getOption('hasManyRoots')) {
+        $nestedset[] = $this->table->getTemplate('NestedSet')->getOption('rootColumnName')
+          ? $this->table->getTemplate('NestedSet')->getOption('rootColumnName') : 'root_id';
+      }
+    }
+
     $fields = dmArray::valueToKey(array_diff($this->table->getAllColumnNames(), array_unique(array_merge(
       // always exclude these fields
       $this->getListExcludedFields(),
@@ -127,7 +136,10 @@ class dmAdminGeneratorBuilder
       // exlude primary keys
       $this->table->getPrimaryKeys(),
       // exclude collumn aggregation key fields
-      array_keys((array)$this->table->getOption('inheritanceMap'))
+      array_keys((array)$this->table->getOption('inheritanceMap')),
+      // exclude nestedset fields
+      $nestedset
+
     ))));
     
 //    foreach($this->module->getDmMediaFields() as $mediaField)
