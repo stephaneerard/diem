@@ -28,7 +28,9 @@ abstract class dmDoctrineRecord extends sfDoctrineRecord
   }
 
   public function getNestedSetParentId() {
-    return $this->getNestedSetParent()->id;
+    if ($parent = $this->getNestedSetParent()) {
+      return $parent->id;
+    }
   }
 
   public function getNestedSetIndentedName()
