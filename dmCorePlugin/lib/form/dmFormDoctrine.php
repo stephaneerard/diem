@@ -103,6 +103,16 @@ abstract class dmFormDoctrine extends sfFormDoctrine
       $fields[] = 'version';
     }
 
+    if ($this->getObject()->getTable()->isNestedSet())
+    {
+      $fields[] = 'lft';
+      $fields[] = 'rgt';
+      $fields[] = 'level';
+      if ($this->getObject()->getTable()->getTemplate('NestedSet')->getOption('hasManyRoots')) {
+        $fields[] = $this->getObject()->getTable()->getTemplate('NestedSet')->getOption('rootColumnName');
+      }
+    }
+
     return $fields;
   }
 
