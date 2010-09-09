@@ -1,7 +1,6 @@
 <?php
 
-// Third maintenance release for Diem 5.1
-define('DIEM_VERSION', '5.1.3');
+define('DIEM_VERSION', '5.2.0-DEV');
 
 // include symfony
 if (!defined('SYMFONY_VERSION'))

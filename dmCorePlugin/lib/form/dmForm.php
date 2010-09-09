@@ -139,6 +139,7 @@ class dmForm extends sfFormSymfony
   
   /**
    * Binds the current form validate it in one step.
+   * Will bind the request only if the request has the form name parameter.
    *
    * @param  array      An array of tainted values to use to bind the form
    * @param  array      An array of uploaded files (in the $_FILES or $_GET format)
@@ -148,7 +149,7 @@ class dmForm extends sfFormSymfony
    */
   public function bindAndValid(sfWebRequest $request)
   {
-    return $this->bindRequest($request)->isValid();
+    return $request->hasParameter($this->name) && $this->bindRequest($request)->isValid();
   }
   
   public function bindRequest(sfWebRequest $request)
