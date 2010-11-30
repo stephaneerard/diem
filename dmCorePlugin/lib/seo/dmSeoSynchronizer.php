@@ -147,7 +147,7 @@ WHERE p.module = ? AND p.action = ?', array($this->culture, $module->getKey(), '
       if($record->getTable()->isNestedSet() && $record->getNode()->hasParent() && $record->getNode()->getParent())
       {
         $record->getNode()->getParent()->refresh(true);
-        $parentSlugs = explode('/', $record->getNode()->getParent()->getDmPage()->get('slug'));
+        $parentSlugs = array_merge($parentSlugs, explode('/', $record->getNode()->getParent()->getDmPage()->get('slug')));
         $parentSlug = implode('/', $parentSlugs);
       }
 
