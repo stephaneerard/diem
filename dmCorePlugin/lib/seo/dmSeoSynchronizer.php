@@ -62,8 +62,8 @@ class dmSeoSynchronizer
     }
 
     /*
-* get autoSeo patterns
-*/
+     * get autoSeo patterns
+     */
     $autoSeoRecord = dmDb::query('DmAutoSeo a')
     ->withI18n($this->culture, null, 'a')
     ->where('a.module = ?', $module->getKey())
@@ -91,8 +91,8 @@ class dmSeoSynchronizer
     }
 
     /*
-* get pages
-*/
+     * get pages
+     */
     $pdoPages = dmDb::pdo('
 SELECT p.id, p.lft, p.rgt, p.record_id, t.auto_mod, t.slug, t.name, t.title, t.h1, t.description, t.keywords, t.is_active, t.id as exist
 FROM dm_page p LEFT JOIN dm_page_translation t ON (t.id = p.id AND t.lang = ?)
@@ -107,18 +107,18 @@ WHERE p.module = ? AND p.action = ?', array($this->culture, $module->getKey(), '
     unset($pdoPages);
 
     /*
-* get records
-*/
+     * get records
+     */
     $records = $module->getTable()->createQuery('r INDEXBY r.id')
     ->withI18n($this->culture, $module->getModel(), 'r')
     ->fetchRecords()
     ->getData();
 
     /*
-* get parent slugs
-* if slug pattern starts with a /
-* we don't use parent slug to build the page slug
-*/
+     * get parent slugs
+     * if slug pattern starts with a /
+     * we don't use parent slug to build the page slug
+     */
     if ($patterns['slug']{0} === '/')
     {
       $parentSlugs = array();
@@ -144,10 +144,13 @@ WHERE p.module = ? AND p.action = ?', array($this->culture, $module->getKey(), '
       }
       //@todo make this behavior optional ?
       $tmp = array();
-      if($record->getTable()->isNestedSet() && $record->getNode()->hasParent() && $record->getNode()->getParent())
+      if($record->getTable()->isNestedSet())
       {
-        $record->getNode()->getParent()->refresh(true);
-        $parentSlugs = array_merge($parentSlugs, explode('/', $record->getNode()->getParent()->getDmPage()->get('slug')));
+        if($record->getNode()->hasParent() && $parentNode = $record->getNode()->getParent()){
+          $parentSlugs = explode('/', $parentNode->getDmPage()->get('slug'));
+        }elseif(count($parentSlugs) > 1){
+          array_pop($parentSlugs);
+        }
         $parentSlug = implode('/', $parentSlugs);
       }
 
@@ -160,15 +163,15 @@ WHERE p.module = ? AND p.action = ?', array($this->culture, $module->getKey(), '
     }
 
     /*
-* Save modifications
-*/
+     * Save modifications
+     */
     if(!empty($modifiedPages))
     {
       /*
-* Fix bug when no DmPage instance have been loaded yet
-* ( this can happen when synchronization is run in a thread )
-* DmPageTranslation class does not exist
-*/
+       * Fix bug when no DmPage instance have been loaded yet
+       * ( this can happen when synchronization is run in a thread )
+       * DmPageTranslation class does not exist
+       */
       if (!class_exists('DmPageTranslation'))
       {
         new DmPage();
@@ -256,18 +259,18 @@ WHERE p.module = ? AND p.action = ?', array($this->culture, $module->getKey(), '
     }
 
     /*
-* Calculate replacements
-*/
+     * Calculate replacements
+     */
     $replacements = $this->getReplacementsForPatterns($module, $patterns, $record);
 
     /*
-* Assign replacements to patterns
-*/
+     * Assign replacements to patterns
+     */
     $values = $this->compilePatterns($patterns, $replacements, $parentSlug);
 
     /*
-* Compare obtained seo values with page values
-*/
+     * Compare obtained seo values with page values
+     */
     $modifiedFields = array();
     foreach($values as $field => $value)
     {
@@ -339,8 +342,8 @@ WHERE p.module = ? AND p.action = ?', array($this->culture, $module->getKey(), '
         continue;
       }
       /*
-* Extract model and field from 'model.field' or 'model'
-*/
+       * Extract model and field from 'model.field' or 'model'
+       */
       if (strpos($placeholder, '.'))
       {
         list($usedModuleKey, $field) = explode('.', $placeholder);
@@ -354,8 +357,8 @@ WHERE p.module = ? AND p.action = ?', array($this->culture, $module->getKey(), '
       $usedModuleKey = dmString::modulize($usedModuleKey);
       $usedRecord = null;
       /*
-* Retrieve used record
-*/
+       * Retrieve used record
+       */
       if ($usedModuleKey === $moduleKey)
       {
         $usedRecord = $record;
@@ -372,8 +375,8 @@ WHERE p.module = ? AND p.action = ?', array($this->culture, $module->getKey(), '
       if ($usedRecord instanceof dmDoctrineRecord)
       {
         /*
-* get record value for field
-*/
+         * get record value for field
+         */
         if ($field === '__toString')
         {
           $usedValue = $usedRecord->__toString();
@@ -541,8 +544,8 @@ LIMIT 1')->getStatement();
   }
 
   /**
-* Static methods
-*/
+   * Static methods
+   */
 
   public static function truncateValueForField($value, $field)
   {
